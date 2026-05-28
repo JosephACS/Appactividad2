@@ -9,53 +9,50 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.android.volley.BuildConfig;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity {
-
-
+public class MainActivity2 extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main2);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        EditText txtAlumnos =findViewById(R.id.editTextTextMultiLine);
+        EditText txtAlumnos =findViewById(R.id.editTextTextMultiLine3);
 
         RequestQueue queue = Volley.newRequestQueue(this);
 
-        JsonObjectRequest request = new JsonObjectRequest(
+        JsonArrayRequest request = new JsonArrayRequest(
                 Request.Method.GET,
-                "https://reqres.in/api/collections/alumnos/records?project_id=20874",
+                "https://xmcstjclxkefrdzbyynk.supabase.co/rest/v1/alumnos",
                 null,
                 response -> {
                     try {
                         StringBuilder texto = new StringBuilder();
-                        JSONArray data = response.getJSONArray("data");
-                        for (int i = 0; i < data.length(); i++){
-                            JSONObject jsonAlumno = data.getJSONObject(i).getJSONObject("data");
-                            texto.append((i+1) + ".- Nombres: " + jsonAlumno.optString("nombres","") + "\n");
-                            texto.append("Correo " + jsonAlumno.optString("correo","")+ "\n");
-                            texto.append("Paralelo " + jsonAlumno.optString("paralelo","")+ "\n");
-                            texto.append("Periodo " + jsonAlumno.optString("periodoacademico","")+ "\n\n");
+                        for (int i = 0; i < response.length(); i++){
+                            JSONObject jsonRegistro = response.getJSONObject(i);
+                            texto.append((i+1) + ".- Nombres: " + jsonRegistro.optString("No.","") + "\n");
+                            texto.append("Correo " + jsonRegistro.optString("CÉDULA","")+ "\n");
+                            texto.append("Paralelo " + jsonRegistro.optString("APELLIDOS Y NOMBRES","")+ "\n");
+                            texto.append("Periodo " + jsonRegistro.optString("CORREO INSTITUCIONAL","")+ "\n\n");
+                            texto.append("Periodo " + jsonRegistro.optString("CORREO INSTITUCIONAL MICROSOFT","")+ "\n\n");
                         }
-                            //texto.append(agregarAlumnosALista(data.getJSONObject(i), i+1));
+                        //texto.append(agregarAlumnosALista(data.getJSONObject(i), i+1));
                         txtAlumnos.setText(texto.toString());
 
                     } catch (Exception e) {
@@ -69,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
-                headers.put("x-api-key", "");
+                headers.put("apikey", "");
                 return headers;
             }
         };
